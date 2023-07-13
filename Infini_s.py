@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 
-def create_stussy_s_segments(top, bottom):
+def create_stussy_s_segments(bottom, top):
     # Original 'Stussy S' segments centered at (0,0)
     norm_segments = [
         np.array([[-0.2, 0.1], [-0.2, 0.3]]), 
@@ -20,21 +20,23 @@ def create_stussy_s_segments(top, bottom):
         np.array([[-0.2,-0.1],[-0.1,0]]),
         np.array([[0.1,0],[0.2,0.1]])
     ]
-    
+
     # Calculate the target size and angle
     size = np.linalg.norm(top - bottom)
-    angle = np.arctan2(top[1] - bottom[1], top[0] - bottom[0])
+    print(size)
+    angle = (np.pi/2) + np.arctan2(top[1] - bottom[1], top[0] - bottom[0])
+    print(angle)
 
     # Create the rotation matrix
     rot_matrix = np.array([
         [np.cos(angle), -np.sin(angle)],
         [np.sin(angle), np.cos(angle)]
     ])
-    
+
     # Initialize segments list
     segments = []
 
-    # Scale, rotate and translate each segment
+    # Scale, rotate, and translate each segment
     for segment in norm_segments:
         new_segment = np.zeros_like(segment)
         for idx, point in enumerate(segment):
@@ -43,11 +45,11 @@ def create_stussy_s_segments(top, bottom):
             # Rotate
             rotated_point = np.dot(rot_matrix, scaled_point)
             # Translate
-            translated_point = rotated_point + bottom
+            translated_point = rotated_point + (top + bottom)/2
             # Store new point
             new_segment[idx] = translated_point
         segments.append(new_segment)
-        
+
     return segments
 
 # Define the drawing speed in units per second
@@ -62,7 +64,7 @@ fig, ax = plt.subplots()
 fig.patch.set_facecolor('black')
 
 # Define the top and bottom points of the 'stussy s'
-top = np.array([1, 1])
+top = np.array([2, 3])
 bottom = np.array([-1, -1])
 
 # Create the segments for the 'stussy s'
